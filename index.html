@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="My Goals">
+<meta name="theme-color" content="#faf6f1">
+<title>My Life Goals — 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --cream:#faf6f1;--ink:#2c1f14;--ink-l:#7a6858;--rule:rgba(0,0,0,.08);
+  --r:14px;--r-sm:8px;--r-lg:20px;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);
+  display:flex;flex-direction:column;max-width:540px;margin:0 auto;
+  box-shadow:0 0 40px rgba(0,0,0,.06)}
+
+.top-bar{background:var(--cream);padding-top:max(env(safe-area-inset-top),16px);
+  padding-left:20px;padding-right:20px;padding-bottom:0;
+  flex-shrink:0;border-bottom:0.5px solid var(--rule)}
+.top-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:2px}
+.app-title{font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);line-height:1.2}
+.app-subtitle{font-size:12px;color:var(--ink-l);margin-top:2px}
+.cur-btn{flex-shrink:0;margin-top:4px;padding:5px 12px;border-radius:20px;
+  border:1.5px solid rgba(0,0,0,.15);background:white;
+  font-family:'DM Sans',sans-serif;font-size:13px;color:#7a6858;cursor:pointer;white-space:nowrap}
+.section-tabs{display:flex;gap:8px;overflow-x:auto;padding:10px 0 10px;scrollbar-width:none}
+.section-tabs::-webkit-scrollbar{display:none}
+.tab-btn{flex-shrink:0;padding:7px 16px;border-radius:20px;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:400;
+  border:1.5px solid;cursor:pointer;white-space:nowrap;transition:all .18s;background:white}
+.tab-btn.active{font-weight:500}
+
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 20px 100px}
+
+/* HOME */
+.home-hero{background:white;border-radius:var(--r-lg);border:0.5px solid var(--rule);
+  padding:20px;margin-bottom:14px;text-align:center}
+.home-greeting{font-family:'Playfair Display',serif;font-size:24px;font-weight:600;
+  color:var(--ink);line-height:1.3;margin-bottom:4px}
+.home-date{font-size:12px;color:var(--ink-l);margin-bottom:16px}
+.home-quote{font-family:'Playfair Display',serif;font-size:14px;font-style:italic;
+  color:var(--ink-l);line-height:1.7;border-top:0.5px solid var(--rule);
+  padding-top:14px;margin-top:4px}
+
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.kpi-card{background:white;border-radius:var(--r);border:0.5px solid var(--rule);padding:13px 14px}
+.kpi-card.accent{border-color:rgba(201,168,76,.25);background:rgba(201,168,76,.07)}
+.kpi-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:600;line-height:1}
+.kpi-lbl{font-size:11px;color:var(--ink-l);margin-top:3px}
+
+.section-snap{background:white;border-radius:var(--r);border:0.5px solid var(--rule);
+  padding:14px;margin-bottom:14px}
+.snap-title{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-l);margin-bottom:12px}
+.snap-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.snap-row:last-child{margin-bottom:0}
+.snap-label{font-size:13px;color:var(--ink);flex:1}
+.snap-bar{flex:2;height:5px;background:rgba(0,0,0,.07);border-radius:3px;overflow:hidden}
+.snap-fill{height:100%;border-radius:3px;transition:width .5s}
+.snap-pct{font-size:11px;color:var(--ink-l);min-width:30px;text-align:right}
+
+.todo-section-h{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-l);margin:16px 0 8px}
+.todo-item{background:white;border:0.5px solid var(--rule);border-radius:var(--r-sm);
+  padding:11px 13px;margin-bottom:6px;display:flex;align-items:flex-start;gap:11px;
+  transition:opacity .15s}
+.todo-chk{width:20px;height:20px;border-radius:5px;border:2px solid;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s;margin-top:1px}
+.todo-chk.done{border-width:0}
+.todo-text{flex:1;min-width:0}
+.todo-title{font-size:14px;line-height:1.4;color:var(--ink)}
+.todo-title.done{text-decoration:line-through;opacity:.4}
+.todo-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.todo-pill{font-size:10px;padding:2px 8px;border-radius:10px;
+  background:var(--cream);color:var(--ink-l)}
+.todo-pill.urgent{background:rgba(224,80,80,.1);color:#c84040}
+.todo-pill.high{background:rgba(200,140,50,.1);color:#a07020}
+.todo-pill.late{background:rgba(224,80,80,.1);color:#c84040}
+.todo-del{background:none;border:none;color:var(--ink-l);cursor:pointer;
+  opacity:.35;font-size:18px;padding:0 2px;flex-shrink:0;line-height:1}
+
+/* GOALS */
+.section-header{display:flex;align-items:center;gap:12px;border-radius:var(--r);
+  padding:14px 16px;margin-bottom:16px}
+.section-icon{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:18px;flex-shrink:0}
+.section-header h2{font-family:'Playfair Display',serif;font-size:19px;font-weight:400}
+.section-header p{font-size:12px;margin-top:2px;opacity:.7}
+
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.stat-card{background:white;border-radius:var(--r);padding:12px 14px;border:0.5px solid var(--rule)}
+.stat-num{font-family:'Playfair Display',serif;font-size:26px;font-weight:600;line-height:1}
+.stat-lbl{font-size:11px;color:var(--ink-l);margin-top:4px}
+
+.ring-wrap{display:flex;align-items:center;gap:14px;background:white;border-radius:var(--r);
+  padding:14px 16px;border:0.5px solid var(--rule);margin-bottom:14px}
+.ring-label{font-family:'Playfair Display',serif;font-size:18px}
+.ring-sub{font-size:13px;color:var(--ink-l);margin-top:3px}
+
+.card{background:white;border-radius:var(--r);border:0.5px solid var(--rule);
+  margin-bottom:10px;overflow:hidden}
+.card-header{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer}
+.card-check{width:24px;height:24px;border-radius:50%;border:2px solid;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.card-title{flex:1;font-size:15px;line-height:1.35}
+.card-title.done{text-decoration:line-through;opacity:.4}
+.card-chevron{color:var(--ink-l);transition:transform .2s;flex-shrink:0}
+.card-chevron.open{transform:rotate(180deg)}
+.card-body{padding:12px 14px 14px;border-top:0.5px solid var(--rule);display:none}
+.card-body.open{display:block}
+.why-text{font-size:13px;color:var(--ink-l);font-style:italic;line-height:1.6;
+  margin-bottom:10px;padding:8px 10px;background:var(--cream);border-radius:var(--r-sm)}
+.meta-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.pill{font-size:11px;padding:3px 10px;border-radius:12px;background:var(--cream);color:var(--ink-l)}
+.prog-lbl{font-size:11px;color:var(--ink-l);display:flex;justify-content:space-between;margin-bottom:4px}
+.prog-track{height:6px;background:rgba(0,0,0,.07);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.prog-fill{height:100%;border-radius:3px;transition:width .3s}
+.notes-ta{width:100%;border:0.5px solid var(--rule);border-radius:var(--r-sm);
+  padding:9px 11px;font-size:13px;font-family:'DM Sans',sans-serif;
+  background:var(--cream);color:var(--ink);resize:none;min-height:64px;margin-top:8px}
+.del-btn{font-size:12px;background:none;border:none;cursor:pointer;opacity:.45;
+  padding:4px 2px;margin-top:6px;font-family:'DM Sans',sans-serif;color:var(--ink)}
+
+.prog-bar-big{height:8px;background:rgba(0,0,0,.07);border-radius:4px;overflow:hidden;margin-bottom:5px}
+.prog-bar-fill{height:100%;border-radius:4px;transition:width .4s}
+.check-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:white;
+  border-radius:var(--r-sm);margin-bottom:7px;border:0.5px solid var(--rule);
+  cursor:pointer;transition:opacity .15s;-webkit-user-select:none;user-select:none}
+.check-item:active{opacity:.7}
+.chk-box{width:22px;height:22px;border-radius:5px;border:2px solid;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:all .2s}
+.chk-box.done{border-width:0}
+.chk-text{flex:1;font-size:14px;line-height:1.3}
+.chk-text.done{text-decoration:line-through;opacity:.4}
+.chk-date{font-size:11px;color:var(--ink-l);display:block;margin-top:2px}
+.chk-del{color:var(--ink-l);font-size:20px;opacity:.35;padding:2px 4px;
+  background:none;border:none;cursor:pointer;flex-shrink:0}
+
+.placement-card{background:white;border-radius:var(--r);border:0.5px solid var(--rule);
+  padding:14px 16px;margin-bottom:10px}
+.placement-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.placement-name{font-size:15px;font-weight:500}
+.num-ctrl{display:flex;align-items:center;gap:10px}
+.num-btn{width:32px;height:32px;border-radius:50%;border:0.5px solid var(--rule);
+  background:var(--cream);font-size:20px;cursor:pointer;display:flex;align-items:center;
+  justify-content:center;font-family:'DM Sans',sans-serif;transition:background .15s}
+.num-btn:active{background:#eee}
+.num-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;
+  min-width:36px;text-align:center}
+.goal-input-row{font-size:12px;color:var(--ink-l);margin-bottom:8px}
+.inline-input{width:52px;border:none;border-bottom:1.5px solid;background:none;
+  font-size:13px;text-align:center;padding:0 2px;font-family:'DM Sans',sans-serif;color:var(--ink)}
+
+.money-card{background:white;border-radius:var(--r);border:0.5px solid var(--rule);
+  padding:14px 16px;margin-bottom:10px}
+.money-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.money-name{font-size:15px;font-weight:500}
+.money-sub{font-size:13px;color:var(--ink-l)}
+.money-inputs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.money-field-wrap label{font-size:11px;color:var(--ink-l);display:block;margin-bottom:3px}
+.money-field{width:100%;border:0.5px solid var(--rule);border-radius:var(--r-sm);
+  padding:8px 10px;font-size:14px;font-family:'DM Sans',sans-serif;
+  background:var(--cream);color:var(--ink)}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.ov-card{background:white;border-radius:var(--r);padding:12px 14px;border:0.5px solid var(--rule)}
+.ov-label{font-size:11px;color:var(--ink-l);margin-bottom:4px}
+
+.sec-label{font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--ink-l);
+  text-transform:uppercase;margin:16px 0 8px}
+.empty{text-align:center;padding:28px 16px;color:var(--ink-l);font-size:14px;font-style:italic}
+
+/* FAB */
+.fab-wrap{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:540px;padding:20px;
+  padding-bottom:max(env(safe-area-inset-bottom),20px);
+  pointer-events:none;display:flex;justify-content:flex-end;
+  background:linear-gradient(transparent,var(--cream) 60%)}
+.fab{width:56px;height:56px;border-radius:50%;border:none;font-size:28px;cursor:pointer;
+  color:white;display:flex;align-items:center;justify-content:center;
+  pointer-events:all;transition:transform .15s;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.fab:active{transform:scale(.93)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:300;
+  background:rgba(44,31,20,.55);align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:white;border-radius:var(--r-lg) var(--r-lg) 0 0;
+  width:100%;max-width:540px;padding:20px;
+  padding-bottom:max(env(safe-area-inset-bottom),24px);
+  max-height:92vh;overflow-y:auto}
+.modal-handle{width:36px;height:4px;border-radius:2px;background:var(--rule);margin:0 auto 16px}
+.modal h3{font-family:'Playfair Display',serif;font-size:19px;margin-bottom:14px}
+.modal label{font-size:12px;color:var(--ink-l);display:block;margin:12px 0 4px}
+.modal label:first-of-type{margin-top:0}
+.modal input,.modal textarea,.modal select{width:100%;border:0.5px solid rgba(0,0,0,.15);
+  border-radius:var(--r-sm);padding:11px 13px;font-size:15px;
+  font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink)}
+.modal textarea{min-height:80px;resize:none}
+.modal-btns{display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:16px}
+.btn-cancel{padding:13px;border-radius:var(--r-sm);border:0.5px solid var(--rule);
+  background:white;font-size:15px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.btn-save{padding:13px;border-radius:var(--r-sm);border:none;font-size:15px;
+  font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;color:white}
+
+.cur-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cur-option{padding:10px 12px;border-radius:var(--r-sm);text-align:left;cursor:pointer;
+  border:1.5px solid rgba(0,0,0,.1);background:white;font-family:'DM Sans',sans-serif;transition:all .15s}
+.cur-option.selected{border-color:#6b9470;background:#edf4ee}
+.cur-symbol{font-size:16px;font-weight:500;color:var(--ink)}
+.cur-code{font-size:11px;color:var(--ink-l);margin-top:1px}
+.cur-name{font-size:10px;color:var(--ink-l)}
+.reminder-banner{background:linear-gradient(135deg,#c97b8e22,#8a7ab522);
+  border:1px solid rgba(201,123,142,.3);border-radius:var(--r);
+  padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start}
+.reminder-item{background:white;border-radius:var(--r);border:0.5px solid var(--rule);
+  padding:12px 14px;margin-bottom:8px;display:flex;align-items:flex-start;gap:11px}
+.rem-bell{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:16px;flex-shrink:0}
+.rem-done{opacity:.4}
+.rem-del{background:none;border:none;color:var(--ink-l);cursor:pointer;
+  opacity:.35;font-size:18px;padding:0 2px;flex-shrink:0;line-height:1}
+.travel-dest{background:white;border-radius:var(--r);border:0.5px solid var(--rule);
+  margin-bottom:10px;overflow:hidden}
+.travel-dest-head{display:flex;align-items:center;gap:10px;padding:13px 14px;cursor:pointer}
+.travel-dest-body{padding:0 14px 14px;border-top:0.5px solid var(--rule);display:none}
+.travel-dest-body.open{display:block}
+.bucket-item{display:flex;align-items:center;gap:10px;padding:8px 0;
+  border-bottom:0.5px solid var(--rule);cursor:pointer}
+.bucket-item:last-child{border-bottom:none}
+.bucket-chk{width:18px;height:18px;border-radius:4px;border:2px solid #4e6ea0;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.bucket-chk.done{background:#4e6ea0;border-color:#4e6ea0}
+.bucket-text{flex:1;font-size:13px}
+.bucket-text.done{text-decoration:line-through;opacity:.4}
+
+
+/* AUTH */
+#auth-screen{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:32px 22px;
+  padding-top:max(env(safe-area-inset-top),32px);background:var(--cream)}
+.auth-logo{width:56px;height:56px;border-radius:16px;
+  background:linear-gradient(135deg,#c97b8e,#8a7ab5);
+  display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.auth-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:600;
+  color:var(--ink);text-align:center;margin-bottom:4px}
+.auth-sub{font-size:13px;color:var(--ink-l);text-align:center;
+  margin-bottom:28px;line-height:1.6}
+.auth-card{background:white;border-radius:var(--r-lg);
+  border:0.5px solid rgba(0,0,0,.1);padding:22px;width:100%;max-width:340px}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:3px;
+  background:rgba(0,0,0,.06);border-radius:var(--r-sm);
+  padding:3px;margin-bottom:18px}
+.auth-tab{padding:8px;border-radius:6px;border:none;background:transparent;
+  font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink-l);
+  cursor:pointer;transition:all .15s}
+.auth-tab.on{background:white;color:var(--ink);font-weight:500}
+.auth-field{margin-bottom:12px}
+.auth-field label{font-size:10px;color:var(--ink-l);display:block;
+  margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em}
+.auth-field input{width:100%;background:var(--cream);
+  border:0.5px solid rgba(0,0,0,.15);border-radius:var(--r-sm);
+  padding:10px 12px;font-size:14px;font-family:'DM Sans',sans-serif;
+  color:var(--ink);outline:none;transition:border-color .15s}
+.auth-field input:focus{border-color:#c97b8e}
+.auth-btn{width:100%;padding:12px;border-radius:var(--r-sm);border:none;
+  font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;
+  color:white;background:linear-gradient(135deg,#c97b8e,#8a7ab5);
+  margin-top:4px;transition:opacity .15s}
+.auth-btn:hover{opacity:.88}
+.auth-btn:disabled{opacity:.4;cursor:not-allowed}
+.auth-err{font-size:12px;text-align:center;margin-top:10px;
+  min-height:16px;color:#e07880}
+.auth-err.ok{color:#50b880}
+.auth-forgot{text-align:center;margin-top:10px}
+.auth-forgot button{background:none;border:none;color:var(--ink-l);
+  font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+#app-screen{display:none;flex:1;flex-direction:column;overflow:hidden}
+#app-screen.show{display:flex}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-logo">
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+      <path d="M13 3C10.2 3 8 5.2 8 8s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5z" fill="white" opacity=".9"/>
+      <path d="M4 23c0-5 4-9 9-9" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".9"/>
+      <path d="M17 17l5 5M17 22l5-5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="auth-title">My life goals</div>
+  <div class="auth-sub">2026 &amp; beyond<br>your next 50 years</div>
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <button class="auth-tab on" id="atl" onclick="swAuth('login')">Sign in</button>
+      <button class="auth-tab" id="ats" onclick="swAuth('signup')">Sign up</button>
+    </div>
+    <div id="auth-login-form">
+      <div class="auth-field"><label>Email</label><input id="a-email" type="email" placeholder="you@email.com" autocomplete="email"></div>
+      <div class="auth-field"><label>Password</label><input id="a-pass" type="password" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="auth-btn" id="a-lbtn" onclick="doLogin()">Sign in</button>
+      <div class="auth-forgot"><button onclick="doReset()">Forgot password?</button></div>
+    </div>
+    <div id="auth-signup-form" style="display:none">
+      <div class="auth-field"><label>Your name</label><input id="a-name" type="text" placeholder="First name" autocomplete="name"></div>
+      <div class="auth-field"><label>Email</label><input id="a-semail" type="email" placeholder="you@email.com" autocomplete="email"></div>
+      <div class="auth-field"><label>Password (min 6 chars)</label><input id="a-spass" type="password" placeholder="••••••••" autocomplete="new-password"></div>
+      <button class="auth-btn" id="a-sbtn" onclick="doSignup()">Create account</button>
+    </div>
+    <div class="auth-err" id="a-err"></div>
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div id="app-screen">
+<div class="top-bar">
+  <div class="top-row">
+    <div>
+      <div class="app-title">My life goals</div>
+      <div class="app-subtitle">2026 &amp; beyond &nbsp;·&nbsp; your next 50 years</div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;margin-top:4px">
+      <button class="cur-btn" id="cur-btn" onclick="openCurModal()">R &nbsp;ZAR</button>
+      <button id="signout-btn" onclick="doLogout()" style="padding:5px 10px;border-radius:20px;border:1.5px solid rgba(0,0,0,.12);background:white;font-family:'DM Sans',sans-serif;font-size:11px;color:#7a6858;cursor:pointer;flex-shrink:0">Sign out</button>
+    </div>
+  </div>
+  <div class="section-tabs" id="tabs"></div>
+</div>
+
+<div class="scroll-area" id="view"></div>
+<div class="fab-wrap"><button class="fab" id="fab" onclick="openModal()">+</button></div>
+
+
+<!-- REMINDERS MODAL -->
+<div class="modal-overlay" id="rem-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>New reminder</h3>
+    <label>Reminder</label>
+    <input id="rem-title" type="text" placeholder="What do you want to be reminded about?">
+    <label>Date</label>
+    <input id="rem-date" type="date">
+    <label>Time</label>
+    <input id="rem-time" type="time">
+    <label>Category</label>
+    <select id="rem-cat">
+      <option value="">General</option>
+      <option>Fitness</option><option>Health</option><option>Travel</option>
+      <option>Therapy</option><option>Learning</option><option>Adventures</option>
+      <option>Work</option><option>Debt</option><option>Savings</option><option>Personal</option>
+    </select>
+    <label>Notes (optional)</label>
+    <textarea id="rem-notes" placeholder="Any extra details…"></textarea>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeRemModal()">Cancel</button>
+      <button class="btn-save" onclick="saveReminder()" style="background:#c97b8e">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRAVEL DESTINATION MODAL -->
+<div class="modal-overlay" id="dest-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3 id="dest-modal-title">New destination</h3>
+    <label>Destination *</label>
+    <input id="dest-name" type="text" placeholder="e.g. Bali, Paris, Cape Town">
+    <label>Target travel date</label>
+    <input id="dest-date" type="date">
+    <label>Money needed</label>
+    <input id="dest-goal" type="number" placeholder="0" inputmode="decimal">
+    <label>Money saved so far</label>
+    <input id="dest-saved" type="number" placeholder="0" inputmode="decimal">
+    <label>Notes & dreams</label>
+    <textarea id="dest-notes" placeholder="Hotels, experiences, foods to try, who you're going with…"></textarea>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeDestModal()">Cancel</button>
+      <button class="btn-save" id="dest-save-btn" onclick="saveDest()" style="background:#4e6ea0">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- BUCKET LIST ITEM MODAL -->
+<div class="modal-overlay" id="bucket-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>Add bucket list item</h3>
+    <label>What do you want to do there?</label>
+    <input id="bucket-title" type="text" placeholder="e.g. Visit the Eiffel Tower, eat street food…">
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeBucketModal()">Cancel</button>
+      <button class="btn-save" onclick="saveBucketItem()" style="background:#4e6ea0">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- GOAL / LIST / DEBT / SAVINGS MODAL -->
+<div class="modal-overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3 id="modal-title"></h3>
+    <div id="modal-body"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" id="btn-save" onclick="saveModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TO-DO MODAL -->
+<div class="modal-overlay" id="todo-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>New to-do</h3>
+    <label>Task</label>
+    <input id="td-title" type="text" placeholder="What do you need to do?">
+    <label>Category</label>
+    <select id="td-cat">
+      <option value="">General</option>
+      <option>Fitness</option><option>Health</option><option>Travel</option>
+      <option>Therapy</option><option>Learning</option><option>Adventures</option>
+      <option>Work</option><option>Debt</option><option>Savings</option><option>Personal</option>
+    </select>
+    <label>Due date (optional)</label>
+    <input id="td-date" type="date">
+    <label>Priority</label>
+    <select id="td-pri">
+      <option value="normal">Normal</option>
+      <option value="high">High</option>
+      <option value="urgent">Urgent</option>
+    </select>
+    <label>Notes (optional)</label>
+    <textarea id="td-notes" placeholder="Any extra details…"></textarea>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeTodoModal()">Cancel</button>
+      <button class="btn-save" id="td-save-btn" onclick="saveTodo()" style="background:#c97b8e">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- CURRENCY MODAL -->
+<div class="modal-overlay" id="cur-overlay">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>Choose currency</h3>
+    <p style="font-size:13px;color:var(--ink-l);margin-bottom:16px;margin-top:-8px">Updates all amounts across the app</p>
+    <div class="cur-grid" id="cur-grid"></div>
+    <button class="btn-cancel" style="width:100%;margin-top:14px" onclick="closeCurModal()">Done</button>
+  </div>
+</div>
+
+<script>
+// ── CURRENCIES ────────────────────────────────────────────────────────────────
+const CURRENCIES = [
+  {code:'ZAR',symbol:'R',name:'S. African Rand'},{code:'USD',symbol:'$',name:'US Dollar'},
+  {code:'GBP',symbol:'£',name:'British Pound'},{code:'EUR',symbol:'€',name:'Euro'},
+  {code:'AUD',symbol:'A$',name:'Australian Dollar'},{code:'CAD',symbol:'C$',name:'Canadian Dollar'},
+  {code:'NZD',symbol:'NZ$',name:'NZ Dollar'},{code:'NGN',symbol:'₦',name:'Nigerian Naira'},
+  {code:'KES',symbol:'KSh',name:'Kenyan Shilling'},{code:'GHS',symbol:'₵',name:'Ghanaian Cedi'},
+  {code:'INR',symbol:'₹',name:'Indian Rupee'},{code:'AED',symbol:'د.إ',name:'UAE Dirham'},
+  {code:'BRL',symbol:'R$',name:'Brazilian Real'},{code:'MXN',symbol:'MX$',name:'Mexican Peso'},
+  {code:'EGP',symbol:'E£',name:'Egyptian Pound'},{code:'PKR',symbol:'Rs',name:'Pakistani Rupee'},
+];
+
+// ── SECTIONS (goals tabs only — home & todo handled separately) ───────────────
+const SECTIONS = [
+  {id:'fitness',  label:'Fitness',    a:'#6b9470',l:'#edf4ee',d:'#1e4020',icon:'🌿',desc:'Move, strengthen, thrive',    type:'goals'},
+  {id:'health',   label:'Health',     a:'#4e8282',l:'#e4eeee',d:'#1a3030',icon:'🌸',desc:'Nourish body & mind',          type:'goals'},
+  {id:'travel',   label:'Travel',     a:'#4e6ea0',l:'#e4eaf5',d:'#1e3060',icon:'✦', desc:'Places to go, worlds to see', type:'list'},
+  {id:'therapy',  label:'Therapy',    a:'#8a7ab5',l:'#ece8f5',d:'#2a1e60',icon:'🌙',desc:'Grow, heal, become',           type:'goals'},
+  {id:'learning', label:'Learning',   a:'#b8873c',l:'#fdf0e0',d:'#503010',icon:'📖',desc:'Stay curious always',          type:'goals'},
+  {id:'adventures',label:'Adventures',a:'#c97b8e',l:'#fbe8ef',d:'#5a2030',icon:'🌺',desc:'Small magic, big life',        type:'list'},
+  {id:'work',     label:'Work',       a:'#6a7f96',l:'#e8ecf2',d:'#1e3040',icon:'✦', desc:'Placements & career goals',   type:'work'},
+  {id:'debt',     label:'Debt',       a:'#9a6e50',l:'#f5ede3',d:'#3a1e08',icon:'✦', desc:'Pay it down, free yourself',  type:'debt'},
+  {id:'savings',  label:'Savings',    a:'#6b9470',l:'#edf4ee',d:'#1e4020',icon:'✦', desc:'Build your future',           type:'savings'},
+];
+
+// All tabs including home and todo
+const ALL_TABS = [
+  {id:'home',  label:'Home'},
+  {id:'todo',  label:'To-do'},
+  {id:'reminders', label:'Reminders'},
+  ...SECTIONS.map(function(s){return {id:s.id, label:s.label};})
+];
+
+// ── SUPABASE CONFIG — REPLACE THESE TWO VALUES ──────────────────────────────
+var SUPABASE_URL = 'YOUR_SUPABASE_URL';
+var SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+// ─────────────────────────────────────────────────────────────────────────────
+var _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var _cu = null;
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+var DATA = {};
+function initData() {
+  SECTIONS.forEach(function(s){ if (!DATA[s.id]) DATA[s.id] = {items:[], notes:''}; });
+  if (!DATA.work||!DATA.work.placements) DATA.work={placements:{m6:{done:0,goal:0},y1:{done:0,goal:0},y18:{done:0,goal:0}},goals:[]};
+  if (!DATA.debt||!Array.isArray(DATA.debt.items)) DATA.debt={items:[]};
+  if (!DATA.savings||!DATA.savings.pots) DATA.savings={total:'',goal:'',monthly:'',pots:[]};
+  if (!DATA.todos) DATA.todos=[];
+}
+initData();
+
+var CUR = 'ZAR';
+var active = 'home';
+var modalMode = null;
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function curObj() { return CURRENCIES.find(function(x){return x.code===CUR;}) || CURRENCIES[0]; }
+function sym() { return curObj().symbol; }
+function fmt(n) { return sym() + Math.round(n).toLocaleString(); }
+async function sv() {
+  if (!_cu) return;
+  await _sb.from('goals_data').upsert({user_id:_cu.id, data:DATA, cur:CUR, updated_at:new Date().toISOString()});
+}
+function svCur() { sv(); }
+
+async function loadData() {
+  document.getElementById('view').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:200px;gap:10px;color:var(--ink-l);font-size:13px"><div style="width:14px;height:14px;border:2px solid rgba(0,0,0,.1);border-top-color:#c97b8e;border-radius:50%;animation:spin .7s linear infinite"></div>Loading your goals…</div>';
+  var r = await _sb.from('goals_data').select('data,cur').eq('user_id',_cu.id).single();
+  if (r.data) {
+    if (r.data.data) { DATA = r.data.data; initData(); }
+    if (r.data.cur) CUR = r.data.cur;
+  }
+  render();
+  checkReminders();
+}
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
+function fmtDate(s) { if(!s)return''; var d=new Date(s); return d.toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'}); }
+function isLate(s) { if(!s)return false; var d=new Date(s); d.setHours(23,59,59); return d < new Date(); }
+function isSoon(s) { if(!s||isLate(s))return false; var diff=(new Date(s)-new Date())/86400000; return diff<=3; }
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render() { renderTabs(); renderView(); updateCurBtn(); }
+
+function updateCurBtn() {
+  var c = curObj();
+  document.getElementById('cur-btn').textContent = c.symbol + '\u00a0\u00a0' + c.code;
+}
+
+function renderTabs() {
+  var fab = document.getElementById('fab');
+  var s = SECTIONS.find(function(x){return x.id===active;});
+  document.getElementById('tabs').innerHTML = ALL_TABS.map(function(t) {
+    var isActive = t.id === active;
+    var accent = t.id==='home' ? '#c97b8e' : t.id==='todo' ? '#8a7ab5' : (SECTIONS.find(function(x){return x.id===t.id;})||{}).a || '#6b9470';
+    return '<button class="tab-btn ' + (isActive?'active':'') + '"'
+      + ' style="border-color:' + (isActive?accent:'rgba(0,0,0,.15)') + ';'
+      + 'background:' + (isActive?accent:'white') + ';'
+      + 'color:' + (isActive?'white':'#7a6858') + '"'
+      + ' onclick="go(\'' + t.id + '\')">' + t.label + '</button>';
+  }).join('');
+  var fabColor = active==='home' ? '#c97b8e' : active==='todo' ? '#8a7ab5' : (s ? s.a : '#6b9470');
+  fab.style.background = fabColor;
+  var bsEl = document.getElementById('btn-save');
+  if (bsEl) bsEl.style.background = s ? s.a : '#6b9470';
+}
+
+function go(id) {
+  active = id;
+  render();
+  document.getElementById('view').scrollTop = 0;
+}
+
+function openModal() {
+  if (active === 'home') { openTodoModal(); return; }
+  if (active === 'todo') { openTodoModal(); return; }
+  if (active === 'reminders') { openRemModal(); return; }
+  if (active === 'travel') { openDestModal(); return; }
+  var s = SECTIONS.find(function(x){return x.id===active;});
+  if (!s) return;
+  document.getElementById('btn-save').style.background = s.a;
+  var t = document.getElementById('modal-title');
+  var b = document.getElementById('modal-body');
+  if (s.type === 'goals' || s.id === 'work') {
+    modalMode = 'goal';
+    t.textContent = 'Add ' + s.label.toLowerCase() + ' goal';
+    b.innerHTML = '<label>Goal</label><input id="mi-title" type="text" placeholder="What do you want to achieve?">'
+      + '<label>Why this matters</label><textarea id="mi-why" placeholder="Your reason — make it personal"></textarea>'
+      + '<label>Target date (optional)</label><input id="mi-date" type="date">'
+      + '<label>Status</label><select id="mi-status"><option value="">Choose...</option>'
+      + '<option>Not started</option><option>In progress</option><option>On track</option>'
+      + '<option>Needs attention</option><option>Complete</option></select>';
+  } else if (s.type === 'list') {
+    modalMode = 'list';
+    t.textContent = 'Add ' + (s.id==='travel'?'destination':'adventure');
+    b.innerHTML = '<label>' + (s.id==='travel'?'Destination':'Adventure') + '</label>'
+      + '<input id="mi-title" type="text" placeholder="' + (s.id==='travel'?'Where do you want to go?':'What do you want to do?') + '">'
+      + '<label>Target date (optional)</label><input id="mi-date" type="date">';
+  } else if (s.id === 'debt') {
+    modalMode = 'debt';
+    t.textContent = 'Add debt';
+    b.innerHTML = '<label>Debt name</label><input id="mi-title" type="text" placeholder="e.g. Credit card, vehicle loan">'
+      + '<label>Total owed (' + sym() + ')</label><input id="mi-total" type="number" placeholder="0" inputmode="decimal">'
+      + '<label>Paid off so far (' + sym() + ')</label><input id="mi-paid" type="number" placeholder="0" inputmode="decimal">';
+  } else if (s.id === 'savings') {
+    modalMode = 'savings';
+    t.textContent = 'Add savings pot';
+    b.innerHTML = '<label>Pot name</label><input id="mi-title" type="text" placeholder="e.g. Emergency fund, holiday">'
+      + '<label>Target amount (' + sym() + ')</label><input id="mi-target" type="number" placeholder="0" inputmode="decimal">'
+      + '<label>Current amount (' + sym() + ')</label><input id="mi-current" type="number" placeholder="0" inputmode="decimal">';
+  }
+  document.getElementById('overlay').classList.add('open');
+  setTimeout(function(){ var el=document.getElementById('mi-title'); if(el) el.focus(); }, 150);
+}
+
+function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+
+function saveModal() {
+  var s = SECTIONS.find(function(x){return x.id===active;});
+  if (!s) return;
+  var titleEl = document.getElementById('mi-title');
+  if (!titleEl) return;
+  var title = titleEl.value.trim();
+  if (!title) return;
+  function val(id) { var el=document.getElementById(id); return el?el.value:''; }
+  if (modalMode === 'goal') {
+    var arr = s.id==='work' ? DATA.work.goals : DATA[s.id].items;
+    arr.push({title:title, why:val('mi-why').trim(), date:val('mi-date'), status:val('mi-status'), progress:0, done:false, open:false, notes:''});
+  } else if (modalMode === 'list') {
+    DATA[s.id].items.push({title:title, date:val('mi-date'), done:false});
+  } else if (modalMode === 'debt') {
+    DATA.debt.items.push({name:title, total:val('mi-total')||'0', paid:val('mi-paid')||'0'});
+  } else if (modalMode === 'savings') {
+    DATA.savings.pots.push({name:title, target:val('mi-target')||'0', current:val('mi-current')||'0'});
+  }
+  sv(); closeModal(); renderView();
+}
+
+// ── HOME ──────────────────────────────────────────────────────────────────────
+function renderView() {
+  var el = document.getElementById('view');
+  if (active === 'home') { el.innerHTML = renderHome(); return; }
+  if (active === 'todo') { el.innerHTML = renderTodo(); return; }
+  if (active === 'reminders') { el.innerHTML = renderReminders(); return; }
+  var s = SECTIONS.find(function(x){return x.id===active;});
+  if (!s) return;
+  var header = '<div class="section-header" style="background:' + s.l + '">'
+    + '<div class="section-icon" style="background:' + s.a + '22">' + s.icon + '</div>'
+    + '<div><h2 style="color:' + s.d + '">' + s.label + '</h2>'
+    + '<p style="color:' + s.d + '">' + s.desc + '</p></div></div>';
+  var body = '';
+  if (s.type==='goals') body = renderGoals(s);
+  else if (s.type==='list') body = renderList(s);
+  else if (s.type==='work') body = renderWork(s);
+  else if (s.id==='debt') body = renderDebt(s);
+  else if (s.id==='savings') body = renderSavings(s);
+  el.innerHTML = header + body;
+}
+
+function renderHome() {
+  var now = new Date();
+  var hr = now.getHours();
+  var greet = hr<12 ? 'Good morning' : hr<17 ? 'Good afternoon' : 'Good evening';
+  var ds = now.toLocaleDateString('en-ZA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+  var QUOTES = [
+    'Motivation is not going to come find me. I am going to create it.',
+    'The next 50 years start today.',
+    'Small steps, taken consistently, become extraordinary journeys.',
+    'You don\'t have to be great to start, but you have to start to be great.',
+    'Every goal begins with the decision to try.',
+    'Progress, not perfection.',
+  ];
+  var quote = QUOTES[now.getDate() % QUOTES.length];
+
+  // count totals
+  var totalGoals = 0, doneGoals = 0;
+  SECTIONS.forEach(function(s) {
+    if (s.type === 'goals' || s.type === 'list') {
+      var items = DATA[s.id] ? DATA[s.id].items||[] : [];
+      totalGoals += items.length;
+      doneGoals += items.filter(function(x){return x.done;}).length;
+    }
+  });
+  var workGoals = (DATA.work && DATA.work.goals) ? DATA.work.goals.length : 0;
+  var workDone = (DATA.work && DATA.work.goals) ? DATA.work.goals.filter(function(x){return x.done;}).length : 0;
+  totalGoals += workGoals; doneGoals += workDone;
+
+  var todos = DATA.todos || [];
+  var openTodos = todos.filter(function(t){return !t.done;}).length;
+  var overdueTodos = todos.filter(function(t){return !t.done && isLate(t.date);}).length;
+
+  var ovPct = totalGoals > 0 ? Math.round(doneGoals/totalGoals*100) : 0;
+  var r=22, circ=2*Math.PI*r, d=(circ*ovPct/100).toFixed(1);
+
+  var h = '<div class="home-hero">'
+    + '<div class="home-greeting">' + greet + '</div>'
+    + '<div class="home-date">' + ds + '</div>'
+    + '<div style="display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:14px">'
+    + '<svg width="70" height="70" viewBox="0 0 70 70">'
+    + '<circle cx="35" cy="35" r="' + r + '" fill="none" stroke="rgba(0,0,0,.07)" stroke-width="6"/>'
+    + '<circle cx="35" cy="35" r="' + r + '" fill="none" stroke="#c97b8e" stroke-width="6"'
+    + ' stroke-dasharray="' + d + ' ' + circ.toFixed(1) + '" stroke-linecap="round" transform="rotate(-90 35 35)"/>'
+    + '<text x="35" y="40" text-anchor="middle" font-size="14" font-weight="600" fill="#c97b8e" font-family="Playfair Display,serif">' + ovPct + '%</text>'
+    + '</svg>'
+    + '<div><div style="font-family:\'Playfair Display\',serif;font-size:22px;font-weight:600;color:var(--ink)">' + doneGoals + ' / ' + totalGoals + '</div>'
+    + '<div style="font-size:12px;color:var(--ink-l);margin-top:2px">goals achieved</div>'
+    + (openTodos > 0 ? '<div style="font-size:12px;color:' + (overdueTodos>0?'#c84040':'var(--ink-l)') + ';margin-top:4px">' + (overdueTodos>0?'⚠️ ':'' ) + openTodos + ' open to-do' + (openTodos===1?'':'s') + '</div>' : '')
+    + '</div></div>'
+    + '<div class="home-quote">"' + quote + '"</div>'
+    + '</div>';
+
+  // kpi grid
+  var savings = DATA.savings||{};
+  var curr = parseFloat(savings.total)||0;
+  var goal = parseFloat(savings.goal)||0;
+  var sPct = goal>0 ? Math.round(Math.min(100,curr/goal*100)) : 0;
+  var debtItems = (DATA.debt&&DATA.debt.items)||[];
+  var debtTot = debtItems.reduce(function(a,b){return a+(parseFloat(b.total)||0);},0);
+  var debtPaid = debtItems.reduce(function(a,b){return a+(parseFloat(b.paid)||0);},0);
+  var dPct = debtTot>0?Math.round(debtPaid/debtTot*100):0;
+
+  h += '<div class="kpi-grid">'
+    + '<div class="kpi-card accent"><div class="kpi-num" style="color:#c97b8e">' + totalGoals + '</div><div class="kpi-lbl">Goals set</div></div>'
+    + '<div class="kpi-card"><div class="kpi-num" style="color:#6b9470">' + doneGoals + '</div><div class="kpi-lbl">Completed</div></div>'
+    + '<div class="kpi-card"><div class="kpi-num" style="color:#9a6e50">' + dPct + '%</div><div class="kpi-lbl">Debt paid off</div></div>'
+    + '<div class="kpi-card"><div class="kpi-num" style="color:#6b9470">' + sPct + '%</div><div class="kpi-lbl">Savings goal</div></div>'
+    + '</div>';
+
+  // section snapshot
+  h += '<div class="section-snap"><div class="snap-title">Progress by area</div>';
+  var snapSections = [
+    {id:'fitness',label:'Fitness',color:'#6b9470'},
+    {id:'health',label:'Health',color:'#4e8282'},
+    {id:'travel',label:'Travel',color:'#4e6ea0'},
+    {id:'therapy',label:'Therapy',color:'#8a7ab5'},
+    {id:'learning',label:'Learning',color:'#b8873c'},
+    {id:'adventures',label:'Adventures',color:'#c97b8e'},
+  ];
+  snapSections.forEach(function(s) {
+    var items = (DATA[s.id]&&DATA[s.id].items)||[];
+    var tot = items.length, dn = items.filter(function(x){return x.done;}).length;
+    var pct = tot>0?Math.round(dn/tot*100):0;
+    h += '<div class="snap-row">'
+      + '<div class="snap-label">' + s.label + '</div>'
+      + '<div class="snap-bar"><div class="snap-fill" style="width:' + pct + '%;background:' + s.color + '"></div></div>'
+      + '<div class="snap-pct">' + (tot>0?pct+'%':'—') + '</div>'
+      + '</div>';
+  });
+  h += '</div>';
+
+  // upcoming to-dos
+  var upcoming = (DATA.todos||[]).filter(function(t){return !t.done;}).slice(0,4);
+  if (upcoming.length) {
+    h += '<div class="snap-title" style="margin-top:16px">Upcoming to-dos</div>';
+    upcoming.forEach(function(t, i) {
+      var late = isLate(t.date);
+      var soon = isSoon(t.date);
+      h += '<div class="todo-item" style="cursor:pointer" onclick="go(\'todo\')">'
+        + '<div class="todo-chk" style="border-color:#8a7ab5;background:transparent"></div>'
+        + '<div class="todo-text">'
+        + '<div class="todo-title">' + esc(t.title) + '</div>'
+        + '<div class="todo-meta">'
+        + (t.cat ? '<span class="todo-pill">' + esc(t.cat) + '</span>' : '')
+        + (t.date ? '<span class="todo-pill' + (late?' late':soon?' high':'') + '">' + (late?'Overdue: ':'') + fmtDate(t.date) + '</span>' : '')
+        + (t.priority&&t.priority!=='normal'?'<span class="todo-pill '+t.priority+'">'+t.priority.charAt(0).toUpperCase()+t.priority.slice(1)+'</span>':'')
+        + '</div></div></div>';
+    });
+  }
+  return h;
+}
+
+// ── TO-DO ─────────────────────────────────────────────────────────────────────
+function renderTodo() {
+  var todos = DATA.todos || [];
+  var h = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">'
+    + '<div style="font-family:\'Playfair Display\',serif;font-size:22px;font-weight:400;color:var(--ink)">To-do list</div>'
+    + '</div>'
+    + '<div style="font-size:12px;color:var(--ink-l);margin-bottom:16px">'
+    + (todos.filter(function(t){return!t.done;}).length) + ' open · '
+    + (todos.filter(function(t){return t.done;}).length) + ' done'
+    + '</div>';
+
+  if (!todos.length) {
+    return h + '<div class="empty">Nothing here yet — tap + to add your first to-do</div>';
+  }
+
+  var overdue = todos.filter(function(t){return !t.done && isLate(t.date);});
+  var open = todos.filter(function(t){return !t.done && !isLate(t.date);});
+  var done = todos.filter(function(t){return t.done;});
+
+  if (overdue.length) {
+    h += '<div class="todo-section-h" style="color:#c84040">Overdue (' + overdue.length + ')</div>';
+    overdue.forEach(function(t){ h += todoItem(t, todos.indexOf(t)); });
+  }
+  if (open.length) {
+    h += '<div class="todo-section-h">Open (' + open.length + ')</div>';
+    open.forEach(function(t){ h += todoItem(t, todos.indexOf(t)); });
+  }
+  if (done.length) {
+    h += '<div class="todo-section-h" style="margin-top:20px">Done (' + done.length + ')</div>';
+    done.forEach(function(t){ h += todoItem(t, todos.indexOf(t)); });
+  }
+  return h;
+}
+
+function todoItem(t, i) {
+  var late = isLate(t.date);
+  var soon = isSoon(t.date);
+  return '<div class="todo-item">'
+    + '<div class="todo-chk ' + (t.done?'done':'') + '"'
+    + ' style="border-color:#8a7ab5;background:' + (t.done?'rgba(138,122,181,.15)':'transparent') + '"'
+    + ' onclick="togTodo(' + i + ')">'
+    + (t.done ? '<svg width="10" height="10" viewBox="0 0 10 10" fill="none"><polyline points="2,5 4,7 8,2" stroke="#8a7ab5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>' : '')
+    + '</div>'
+    + '<div class="todo-text">'
+    + '<div class="todo-title ' + (t.done?'done':'') + '">' + esc(t.title) + '</div>'
+    + '<div class="todo-meta">'
+    + (t.cat ? '<span class="todo-pill">' + esc(t.cat) + '</span>' : '')
+    + (t.date ? '<span class="todo-pill' + (late&&!t.done?' late':soon&&!t.done?' high':'') + '">' + (late&&!t.done?'⚠️ Overdue · ':'') + fmtDate(t.date) + '</span>' : '')
+    + (t.priority&&t.priority!=='normal' ? '<span class="todo-pill ' + t.priority + '">' + t.priority.charAt(0).toUpperCase() + t.priority.slice(1) + '</span>' : '')
+    + '</div>'
+    + (t.notes ? '<div style="font-size:12px;color:var(--ink-l);margin-top:4px;font-style:italic">' + esc(t.notes) + '</div>' : '')
+    + '</div>'
+    + '<button class="todo-del" onclick="delTodo(' + i + ')">×</button>'
+    + '</div>';
+}
+
+function openTodoModal() {
+  document.getElementById('td-title').value = '';
+  document.getElementById('td-cat').value = '';
+  document.getElementById('td-date').value = '';
+  document.getElementById('td-pri').value = 'normal';
+  document.getElementById('td-notes').value = '';
+  document.getElementById('todo-overlay').classList.add('open');
+  setTimeout(function(){ document.getElementById('td-title').focus(); }, 150);
+}
+function closeTodoModal() { document.getElementById('todo-overlay').classList.remove('open'); }
+function saveTodo() {
+  var title = document.getElementById('td-title').value.trim();
+  if (!title) return;
+  DATA.todos.push({
+    id: uid(),
+    title: title,
+    cat: document.getElementById('td-cat').value,
+    date: document.getElementById('td-date').value,
+    priority: document.getElementById('td-pri').value,
+    notes: document.getElementById('td-notes').value.trim(),
+    done: false,
+    created: Date.now()
+  });
+  sv(); closeTodoModal(); renderView();
+}
+function togTodo(i) {
+  if (DATA.todos[i]) { DATA.todos[i].done = !DATA.todos[i].done; sv(); renderView(); }
+}
+function delTodo(i) { DATA.todos.splice(i,1); sv(); renderView(); }
+
+// ── GOALS ─────────────────────────────────────────────────────────────────────
+function ring(pct, accent, size) {
+  size = size||56;
+  var r=size*.39, c=size/2, circ=2*Math.PI*r, d=(circ*pct/100).toFixed(1);
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '" style="flex-shrink:0">'
+    + '<circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="none" stroke="rgba(0,0,0,.07)" stroke-width="' + (size*.09) + '"/>'
+    + '<circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="none" stroke="' + accent + '" stroke-width="' + (size*.09) + '"'
+    + ' stroke-dasharray="' + d + ' ' + circ.toFixed(1) + '" stroke-linecap="round" transform="rotate(-90 ' + c + ' ' + c + ')"/>'
+    + '<text x="' + c + '" y="' + (c+size*.07) + '" text-anchor="middle" font-size="' + (size*.25) + '" font-weight="600"'
+    + ' fill="' + accent + '" font-family="Playfair Display,serif">' + pct + '%</text></svg>';
+}
+
+function renderGoals(s) {
+  var items = DATA[s.id].items||[];
+  var done = items.filter(function(x){return x.done;}).length;
+  var total = items.length;
+  var pct = total ? Math.round(done/total*100) : 0;
+  var h = '<div class="stats-row"><div class="stat-card"><div class="stat-num" style="color:' + s.a + '">' + total + '</div><div class="stat-lbl">Goals set</div></div>'
+    + '<div class="stat-card"><div class="stat-num" style="color:' + s.a + '">' + done + '</div><div class="stat-lbl">Completed</div></div></div>'
+    + '<div class="ring-wrap">' + ring(pct,s.a,60)
+    + '<div><div class="ring-label" style="color:' + s.d + '">' + pct + '% complete</div>'
+    + '<div class="ring-sub">' + (total===0?'Add your first goal below':done+' of '+total+' goals') + '</div></div></div>'
+    + '<div class="sec-label">My goals</div>';
+  if (!items.length) h += '<div class="empty">No goals yet — tap + to add one</div>';
+  items.forEach(function(item, i) {
+    var p = item.progress||0;
+    h += '<div class="card"><div class="card-header" onclick="expand(\'' + s.id + '\',' + i + ')">'
+      + '<div class="card-check ' + (item.done?'done':'') + '"'
+      + ' style="border-color:' + s.a + ';background:' + (item.done?s.a:'transparent') + '"'
+      + ' onclick="event.stopPropagation();tgl(\'' + s.id + '\',' + i + ')">'
+      + (item.done?'<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><polyline points="2,6 5,9 10,3" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')
+      + '</div>'
+      + '<div class="card-title ' + (item.done?'done':'') + '">' + esc(item.title) + '</div>'
+      + '<svg class="card-chevron ' + (item.open?'open':'') + '" width="16" height="16" viewBox="0 0 16 16" fill="none"><polyline points="4,6 8,10 12,6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
+      + '</div><div class="card-body ' + (item.open?'open':'') + '">'
+      + (item.why?'<div class="why-text">"' + esc(item.why) + '"</div>':'')
+      + '<div class="meta-row">'
+      + (item.date?'<span class="pill">📅 ' + item.date + '</span>':'')
+      + (item.status?'<span class="pill" style="background:' + s.l + ';color:' + s.d + '">' + item.status + '</span>':'')
+      + '</div>'
+      + '<div class="prog-lbl"><span>Progress</span><span id="pv-' + s.id + '-' + i + '">' + p + '%</span></div>'
+      + '<div class="prog-track"><div class="prog-fill" id="pf-' + s.id + '-' + i + '" style="width:' + p + '%;background:' + s.a + '"></div></div>'
+      + '<input type="range" min="0" max="100" value="' + p + '" step="5" style="width:100%;accent-color:' + s.a + ';margin:4px 0 2px"'
+      + ' oninput="setProg(\'' + s.id + '\',' + i + ',this.value)">'
+      + '<textarea class="notes-ta" placeholder="Notes, next steps..." oninput="setNote(\'' + s.id + '\',' + i + ',this.value)">' + esc(item.notes||'') + '</textarea>'
+      + '<div style="display:flex;justify-content:flex-end"><button class="del-btn" onclick="delItem(\'' + s.id + '\',' + i + ')">Delete</button></div>'
+      + '</div></div>';
+  });
+  return h;
+}
+
+function renderList(s) {
+  if (s.id === 'travel') return renderTravel(s);
+  var items = DATA[s.id].items||[];
+  var done = items.filter(function(x){return x.done;}).length;
+  var total = items.length;
+  var pct = total ? Math.round(done/total*100) : 0;
+  var h = '<div class="stats-row"><div class="stat-card"><div class="stat-num" style="color:' + s.a + '">' + total + '</div><div class="stat-lbl">Adventures</div></div>'
+    + '<div class="stat-card"><div class="stat-num" style="color:' + s.a + '">' + done + '</div><div class="stat-lbl">Done</div></div></div>'
+    + '<div class="prog-bar-big"><div class="prog-bar-fill" style="width:' + pct + '%;background:' + s.a + '"></div></div>'
+    + '<div style="font-size:12px;color:var(--ink-l);margin-bottom:14px">' + pct + '% complete</div>'
+    + '<div class="sec-label">Adventure list</div>';
+  if (!items.length) h += '<div class="empty">Nothing yet — tap + to add</div>';
+  items.forEach(function(item, i) {
+    h += '<div class="check-item" onclick="tgl(\'' + s.id + '\',' + i + ')">'
+      + '<div class="chk-box ' + (item.done?'done':'') + '" style="border-color:' + s.a + ';background:' + (item.done?s.a:'transparent') + '">'
+      + (item.done?'<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><polyline points="2,5.5 4.5,8 9,2.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')
+      + '</div>'
+      + '<div class="chk-text ' + (item.done?'done':'') + '">' + esc(item.title)
+      + (item.date?'<span class="chk-date">' + item.date + '</span>':'') + '</div>'
+      + '<button class="chk-del" onclick="event.stopPropagation();delItem(\'' + s.id + '\',' + i + ')">×</button>'
+      + '</div>';
+  });
+  return h;
+}
+
+
+
+
+function renderTravel(s) {
+  if (!DATA.travel) DATA.travel = {items:[], destinations:[]};
+  var dests = DATA.travel.destinations||[];
+  var visited = dests.filter(function(d){return d.visited;}).length;
+  var totalSaved = dests.reduce(function(a,d){return a+(parseFloat(d.saved)||0);},0);
+  var totalNeeded = dests.reduce(function(a,d){return a+(parseFloat(d.goal)||0);},0);
+  var sPct = totalNeeded>0?Math.round(Math.min(100,totalSaved/totalNeeded*100)):0;
+
+  var h = '<div class="stats-row">'
+    + '<div class="stat-card"><div class="stat-num" style="color:' + s.a + '">' + dests.length + '</div><div class="stat-lbl">Destinations</div></div>'
+    + '<div class="stat-card"><div class="stat-num" style="color:' + s.a + '">' + visited + '</div><div class="stat-lbl">Visited</div></div>'
+    + '</div>'
+    + '<div class="ring-wrap">' + ring(sPct,s.a,56)
+    + '<div><div class="ring-label" style="color:' + s.d + '">' + fmt(totalSaved) + ' saved</div>'
+    + '<div class="ring-sub">of ' + fmt(totalNeeded) + ' total travel fund</div></div></div>'
+    + '<div class="sec-label">My destinations</div>';
+
+  if (!dests.length) h += '<div class="empty">No destinations yet — tap + to plan your first trip!</div>';
+
+  dests.forEach(function(dest, di) {
+    var g = parseFloat(dest.goal)||0;
+    var sv3 = parseFloat(dest.saved)||0;
+    var pp = g>0?Math.round(Math.min(100,sv3/g*100)):0;
+    var buckets = dest.bucketList||[];
+    var bdone = buckets.filter(function(b){return b.done;}).length;
+    h += '<div class="travel-dest">'
+      + '<div class="travel-dest-head" onclick="togDest(' + di + ')">'
+      + '<div style="width:36px;height:36px;border-radius:50%;background:'+s.a+'22;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">✈️</div>'
+      + '<div style="flex:1;min-width:0">'
+      + '<div style="font-size:15px;font-weight:500;color:var(--ink)">' + esc(dest.name) + '</div>'
+      + '<div style="font-size:11px;color:var(--ink-l);margin-top:2px">'
+      + (dest.date?'📅 '+fmtDate(dest.date)+' · ':'')
+      + fmt(sv3) + ' / ' + fmt(g)
+      + (buckets.length?' · '+bdone+'/'+buckets.length+' done':'')
+      + '</div>'
+      + '<div class="prog-track" style="margin-top:5px"><div class="prog-fill" style="width:'+pp+'%;background:'+s.a+'"></div></div>'
+      + '</div>'
+      + '<span style="font-size:11px;padding:3px 8px;border-radius:12px;background:'+s.a+'22;color:'+s.a+';flex-shrink:0">'+pp+'%</span>'
+      + '<svg style="color:var(--ink-l);flex-shrink:0;transition:transform .2s'+(dest.open?';transform:rotate(180deg)':'')+'" width="14" height="14" viewBox="0 0 14 14" fill="none"><polyline points="3,5 7,9 11,5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>'
+      + '</div>'
+      + '<div class="travel-dest-body ' + (dest.open?'open':'') + '">'
+      + '<div class="money-inputs" style="margin-top:10px">'
+      + '<div class="money-field-wrap"><label>Money needed (' + sym() + ')</label>'
+      + '<input class="money-field" type="number" value="'+(dest.goal||'')+'" placeholder="0" oninput="updDest('+di+','goal',this.value)"></div>'
+      + '<div class="money-field-wrap"><label>Saved so far (' + sym() + ')</label>'
+      + '<input class="money-field" type="number" value="'+(dest.saved||'')+'" placeholder="0" oninput="updDest('+di+','saved',this.value)"></div>'
+      + '</div>'
+      + (dest.notes?'<div style="font-size:13px;color:var(--ink-l);font-style:italic;padding:8px 0;line-height:1.6">'+esc(dest.notes)+'</div>':'')
+      + '<div style="display:flex;align-items:center;justify-content:space-between;margin:10px 0 6px">'
+      + '<div style="font-size:11px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-l)">Bucket list ('+bdone+'/'+buckets.length+')</div>'
+      + '<button onclick="openBucketModal('+di+')" style="font-size:11px;background:'+s.a+'22;border:0.5px solid '+s.a+'44;border-radius:10px;padding:3px 10px;color:'+s.a+';cursor:pointer;font-family:DM Sans,sans-serif">+ Add</button>'
+      + '</div>';
+    if (!buckets.length) h += '<div style="font-size:13px;color:var(--ink-l);font-style:italic;padding:4px 0">No items yet</div>';
+    buckets.forEach(function(b, bi) {
+      h += '<div class="bucket-item" onclick="togBucket('+di+','+bi+')">'
+        + '<div class="bucket-chk '+(b.done?'done':'')+'">'
+        + (b.done?'<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><polyline points="2,4.5 4,6.5 7.5,2" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')
+        + '</div>'
+        + '<div class="bucket-text '+(b.done?'done':'')+'">'+esc(b.title)+'</div>'
+        + '<button onclick="event.stopPropagation();delBucket('+di+','+bi+')" style="background:none;border:none;color:var(--ink-l);cursor:pointer;opacity:.3;font-size:16px;padding:0 2px">×</button>'
+        + '</div>';
+    });
+    h += '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:0.5px solid var(--rule)">'
+      + '<button onclick="openEditDest('+di+')" style="font-size:12px;background:none;border:none;cursor:pointer;color:var(--ink-l);font-family:DM Sans,sans-serif">Edit details</button>'
+      + '<button onclick="delDest('+di+')" style="font-size:12px;background:none;border:none;cursor:pointer;color:var(--ink-l);opacity:.5;font-family:DM Sans,sans-serif">Remove</button>'
+      + '</div></div></div>';
+  });
+  return h;
+}
+
+function renderWork(s) {
+  var w = DATA.work;
+  var periods = [{k:'m6',n:'6 months'},{k:'y1',n:'1 year'},{k:'y18',n:'18 months'}];
+  var h = '<div class="sec-label">Placement targets</div>';
+  periods.forEach(function(p) {
+    var pd = w.placements[p.k]||{done:0,goal:0};
+    var pct = pd.goal>0 ? Math.round(Math.min(100,pd.done/pd.goal*100)) : 0;
+    h += '<div class="placement-card"><div class="placement-top"><div class="placement-name">' + p.n + '</div>'
+      + '<div class="num-ctrl"><button class="num-btn" style="color:' + s.a + '" onclick="adjP(\'' + p.k + '\',-1)">−</button>'
+      + '<div class="num-val" style="color:' + s.a + '">' + pd.done + '</div>'
+      + '<button class="num-btn" style="color:' + s.a + '" onclick="adjP(\'' + p.k + '\',1)">+</button></div></div>'
+      + '<div class="goal-input-row">Target: <input class="inline-input" style="border-color:' + s.a + '" type="number" value="' + pd.goal + '" min="0" oninput="setGoalP(\'' + p.k + '\',this.value)"> placements</div>'
+      + '<div class="prog-track"><div class="prog-fill" style="width:' + pct + '%;background:' + s.a + '"></div></div>'
+      + '<div style="font-size:11px;color:var(--ink-l)">' + pct + '% of target</div></div>';
+  });
+  var goals = w.goals||[];
+  h += '<div class="sec-label">Work goals</div>';
+  if (!goals.length) h += '<div class="empty">No work goals yet — tap + to add</div>';
+  goals.forEach(function(item, i) {
+    h += '<div class="check-item" onclick="tglW(' + i + ')">'
+      + '<div class="chk-box ' + (item.done?'done':'') + '" style="border-color:' + s.a + ';background:' + (item.done?s.a:'transparent') + '">'
+      + (item.done?'<svg width="11" height="11" viewBox="0 0 11 11" fill="none"><polyline points="2,5.5 4.5,8 9,2.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')
+      + '</div>'
+      + '<div class="chk-text ' + (item.done?'done':'') + '">' + esc(item.title) + '</div>'
+      + '<button class="chk-del" onclick="event.stopPropagation();delW(' + i + ')">×</button></div>';
+  });
+  return h;
+}
+
+function renderDebt(s) {
+  var items = DATA.debt.items||[];
+  var tot = items.reduce(function(a,b){return a+(parseFloat(b.total)||0);},0);
+  var paid = items.reduce(function(a,b){return a+(parseFloat(b.paid)||0);},0);
+  var pct = tot>0 ? Math.round(paid/tot*100) : 0;
+  var h = '<div class="stats-row"><div class="stat-card"><div class="stat-num" style="color:' + s.a + ';font-size:20px">' + fmt(tot) + '</div><div class="stat-lbl">Total debt</div></div>'
+    + '<div class="stat-card"><div class="stat-num" style="color:' + s.a + ';font-size:20px">' + fmt(paid) + '</div><div class="stat-lbl">Paid off</div></div></div>'
+    + '<div class="ring-wrap">' + ring(pct,s.a,60)
+    + '<div><div class="ring-label" style="color:' + s.d + '">' + pct + '% paid off</div>'
+    + '<div class="ring-sub">' + fmt(Math.max(0,tot-paid)) + ' remaining</div></div></div>'
+    + '<div class="sec-label">My debts</div>';
+  if (!items.length) h += '<div class="empty">No debts yet — tap + to add</div>';
+  items.forEach(function(item, i) {
+    var t=parseFloat(item.total)||0, p=parseFloat(item.paid)||0;
+    var dp = t>0 ? Math.round(Math.min(100,p/t*100)) : 0;
+    h += '<div class="money-card"><div class="money-top"><div class="money-name">' + esc(item.name) + '</div>'
+      + '<div class="money-sub" style="color:' + (dp>=100?s.a:'var(--ink-l)') + '">'
+      + (dp>=100?'✓ Paid off':fmt(Math.max(0,t-p))+' left') + '</div></div>'
+      + '<div class="prog-track"><div class="prog-fill" style="width:' + dp + '%;background:' + s.a + '"></div></div>'
+      + '<div style="font-size:11px;color:var(--ink-l);margin-bottom:4px">' + dp + '% paid</div>'
+      + '<div class="money-inputs"><div class="money-field-wrap"><label>Total owed (' + sym() + ')</label>'
+      + '<input class="money-field" type="number" value="' + (item.total||'') + '" placeholder="0" oninput="updD(' + i + ',\'total\',this.value)"></div>'
+      + '<div class="money-field-wrap"><label>Paid so far (' + sym() + ')</label>'
+      + '<input class="money-field" type="number" value="' + (item.paid||'') + '" placeholder="0" oninput="updD(' + i + ',\'paid\',this.value)"></div></div>'
+      + '<div style="display:flex;justify-content:flex-end;margin-top:4px"><button class="del-btn" onclick="delD(' + i + ')">Remove</button></div></div>';
+  });
+  return h;
+}
+
+function renderSavings(s) {
+  var sv2 = DATA.savings;
+  var curr = parseFloat(sv2.total)||0, goal = parseFloat(sv2.goal)||0;
+  var pct = goal>0 ? Math.round(Math.min(100,curr/goal*100)) : 0;
+  var pots = sv2.pots||[];
+  var inStyle = 'padding:4px 0;border:none;border-bottom:1px solid ' + s.a + ';background:none;font-size:16px;font-family:Playfair Display,serif;font-weight:600;color:' + s.a;
+  var h = '<div class="ring-wrap" style="margin-bottom:14px">' + ring(pct,s.a,64)
+    + '<div><div class="ring-label" style="color:' + s.d + '">' + fmt(curr) + ' saved</div>'
+    + '<div class="ring-sub">of ' + fmt(goal) + ' goal</div></div></div>'
+    + '<div class="overview-grid">'
+    + '<div class="ov-card"><div class="ov-label">Current savings</div><input class="money-field" type="number" value="' + (sv2.total||'') + '" placeholder="0" oninput="updSv(\'total\',this.value)" style="' + inStyle + '"></div>'
+    + '<div class="ov-card"><div class="ov-label">Savings goal</div><input class="money-field" type="number" value="' + (sv2.goal||'') + '" placeholder="0" oninput="updSv(\'goal\',this.value)" style="' + inStyle + '"></div>'
+    + '<div class="ov-card" style="grid-column:1/-1"><div class="ov-label">Monthly target</div><input class="money-field" type="number" value="' + (sv2.monthly||'') + '" placeholder="0" oninput="updSv(\'monthly\',this.value)" style="' + inStyle + '"></div>'
+    + '</div><div class="sec-label">Savings pots</div>';
+  if (!pots.length) h += '<div class="empty">No pots yet — tap + to add one</div>';
+  pots.forEach(function(pot, i) {
+    var t=parseFloat(pot.target)||0, c2=parseFloat(pot.current)||0;
+    var pp = t>0?Math.round(Math.min(100,c2/t*100)):0;
+    var remaining = Math.max(0,t-c2);
+    h += '<div class="money-card"><div class="money-top"><div class="money-name">' + esc(pot.name) + '</div>'
+      + '<div class="money-sub" style="color:' + (pp>=100?s.a:'var(--ink-l)') + '">' + (pp>=100?'✓ Goal reached!':pp + '% · ' + fmt(remaining) + ' to go') + '</div></div>'
+      + '<div class="prog-track"><div class="prog-fill" style="width:' + pp + '%;background:' + s.a + '"></div></div>'
+      + '<div style="font-size:11px;color:var(--ink-l);margin-bottom:8px">' + fmt(c2) + ' saved of ' + fmt(t) + ' goal'
+      + (pot.targetDate?' · 📅 '+fmtDate(pot.targetDate):'') + '</div>'
+      + '<div class="money-inputs">'
+      + '<div class="money-field-wrap"><label>Target (' + sym() + ')</label><input class="money-field" type="number" value="' + (pot.target||'') + '" placeholder="0" oninput="updP(' + i + ',\'target\',this.value)"></div>'
+      + '<div class="money-field-wrap"><label>Saved so far (' + sym() + ')</label><input class="money-field" type="number" value="' + (pot.current||'') + '" placeholder="0" oninput="updP(' + i + ',\'current\',this.value)"></div>'
+      + '<div class="money-field-wrap"><label>Target date</label><input class="money-field" type="date" value="' + (pot.targetDate||'') + '" onchange="updP(' + i + ',\'targetDate\',this.value)"></div>'
+      + '<div class="money-field-wrap"><label>What it\'s for</label><input class="money-field" type="text" value="' + esc(pot.purpose||'') + '" placeholder="e.g. Holiday, car" oninput="updP(' + i + ',\'purpose\',this.value)"></div>'
+      + '</div>'
+      + '<div style="margin-top:8px"><label style="font-size:11px;color:var(--ink-l);display:block;margin-bottom:3px">Notes</label>'
+      + '<textarea style="width:100%;border:0.5px solid var(--rule);border-radius:var(--r-sm);padding:7px 9px;font-size:12px;font-family:DM Sans,sans-serif;background:var(--cream);color:var(--ink);resize:none;min-height:48px;outline:none" placeholder="Notes about this pot…" oninput="updP(' + i + ',\'notes\',this.value)">' + esc(pot.notes||'') + '</textarea></div>'
+      + '<div style="display:flex;justify-content:flex-end;margin-top:4px"><button class="del-btn" onclick="delP(' + i + ')">Remove</button></div></div>';
+  });
+
+  return h;
+}
+
+// ── CURRENCY ──────────────────────────────────────────────────────────────────
+function openCurModal() {
+  document.getElementById('cur-grid').innerHTML = CURRENCIES.map(function(c) {
+    return '<button class="cur-option ' + (c.code===CUR?'selected':'') + '" onclick="setCur(\'' + c.code + '\')">'
+      + '<div class="cur-symbol">' + c.symbol + '</div>'
+      + '<div class="cur-code">' + c.code + '</div>'
+      + '<div class="cur-name">' + c.name + '</div></button>';
+  }).join('');
+  document.getElementById('cur-overlay').classList.add('open');
+}
+function closeCurModal() { document.getElementById('cur-overlay').classList.remove('open'); }
+function setCur(code) { CUR = code; svCur(); closeCurModal(); render(); }
+
+// ── DATA HELPERS ──────────────────────────────────────────────────────────────
+function expand(sid,i){DATA[sid].items[i].open=!DATA[sid].items[i].open;sv();renderView();}
+function tgl(sid,i){DATA[sid].items[i].done=!DATA[sid].items[i].done;sv();renderView();}
+function tglW(i){DATA.work.goals[i].done=!DATA.work.goals[i].done;sv();renderView();}
+function delItem(sid,i){DATA[sid].items.splice(i,1);sv();renderView();}
+function delW(i){DATA.work.goals.splice(i,1);sv();renderView();}
+function delD(i){DATA.debt.items.splice(i,1);sv();renderView();}
+function delP(i){DATA.savings.pots.splice(i,1);sv();renderView();}
+function setProg(sid,i,v){DATA[sid].items[i].progress=parseInt(v);sv();
+  var f=document.getElementById('pf-'+sid+'-'+i);
+  var l=document.getElementById('pv-'+sid+'-'+i);
+  if(f)f.style.width=v+'%';if(l)l.textContent=v+'%';}
+function setNote(sid,i,v){DATA[sid].items[i].notes=v;sv();}
+function adjP(k,d){DATA.work.placements[k].done=Math.max(0,(DATA.work.placements[k].done||0)+d);sv();renderView();}
+function setGoalP(k,v){DATA.work.placements[k].goal=parseInt(v)||0;sv();}
+function updD(i,f,v){DATA.debt.items[i][f]=v;sv();renderView();}
+function updSv(f,v){DATA.savings[f]=v;sv();}
+function updP(i,f,v){DATA.savings.pots[i][f]=v;sv();renderView();}
+
+
+// ── REMINDERS ────────────────────────────────────────────────────────────────
+function renderReminders() {
+  if (!DATA.reminders) DATA.reminders = [];
+  var rems = DATA.reminders;
+  var now = new Date();
+  var h = '<div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:var(--ink);margin-bottom:4px">Reminders</div>'
+    + '<div style="font-size:12px;color:var(--ink-l);margin-bottom:16px">' + rems.filter(function(r){return !r.done;}).length + ' upcoming</div>';
+
+  var due = rems.filter(function(r){return !r.done && r.date && new Date(r.date+' '+(r.time||'23:59')) <= now;});
+  if (due.length) {
+    h += '<div style="background:rgba(201,123,142,.08);border:1px solid rgba(201,123,142,.25);border-radius:var(--r);padding:12px 14px;margin-bottom:14px">'
+      + '<div style="font-size:12px;font-weight:500;color:#c97b8e;margin-bottom:8px">🔔 Due now (' + due.length + ')</div>';
+    due.forEach(function(r){h += reminderItem(r, rems.indexOf(r));});
+    h += '</div>';
+  }
+
+  var upcoming = rems.filter(function(r){return !r.done && !(r.date && new Date(r.date+' '+(r.time||'23:59')) <= now);});
+  var done = rems.filter(function(r){return r.done;});
+
+  if (upcoming.length) {
+    h += '<div class="sec-label">Upcoming</div>';
+    upcoming.sort(function(a,b){return new Date(a.date||'9999')-new Date(b.date||'9999');});
+    upcoming.forEach(function(r){h += reminderItem(r, rems.indexOf(r));});
+  }
+  if (!rems.length) h += '<div class="empty">No reminders yet — tap + to add one</div>';
+  if (done.length) {
+    h += '<div class="sec-label" style="margin-top:16px">Done (' + done.length + ')</div>';
+    done.forEach(function(r){h += reminderItem(r, rems.indexOf(r));});
+  }
+  return h;
+}
+
+function reminderItem(r, i) {
+  var catColors = {'Fitness':'#6b9470','Health':'#4e8282','Travel':'#4e6ea0','Therapy':'#8a7ab5','Learning':'#b8873c','Adventures':'#c97b8e','Work':'#6a7f96','Debt':'#9a6e50','Savings':'#6b9470'};
+  var col = catColors[r.cat] || '#c97b8e';
+  var isDue = r.date && new Date(r.date+' '+(r.time||'23:59')) <= new Date();
+  return '<div class="reminder-item">'
+    + '<div class="rem-bell" style="background:' + col + '22">' + (r.done?'✅':'🔔') + '</div>'
+    + '<div style="flex:1;min-width:0">'
+    + '<div style="font-size:14px;color:var(--ink);' + (r.done?'text-decoration:line-through;opacity:.4':'') + '">' + esc(r.title) + '</div>'
+    + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">'
+    + (r.cat?'<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:'+col+'22;color:'+col+'">'+esc(r.cat)+'</span>':'')
+    + (r.date?'<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:'+(isDue&&!r.done?'rgba(200,64,64,.1)':'rgba(0,0,0,.06)')+';color:'+(isDue&&!r.done?'#c84040':'var(--ink-l)')+'">📅 '+fmtDate(r.date)+(r.time?' '+r.time:'')+'</span>':'')
+    + '</div>'
+    + (r.notes?'<div style="font-size:12px;color:var(--ink-l);margin-top:3px;font-style:italic">'+esc(r.notes)+'</div>':'')
+    + '</div>'
+    + '<div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">'
+    + '<button onclick="togRem('+i+')" style="background:none;border:0.5px solid var(--rule);border-radius:var(--r-sm);padding:3px 8px;font-size:11px;cursor:pointer;font-family:DM Sans,sans-serif;color:var(--ink-l)">' + (r.done?'Undo':'Done') + '</button>'
+    + '<button class="rem-del" onclick="delRem('+i+')">×</button>'
+    + '</div></div>';
+}
+
+function openRemModal() {
+  document.getElementById('rem-title').value='';
+  document.getElementById('rem-date').value='';
+  document.getElementById('rem-time').value='';
+  document.getElementById('rem-cat').value='';
+  document.getElementById('rem-notes').value='';
+  document.getElementById('rem-overlay').classList.add('open');
+  setTimeout(function(){document.getElementById('rem-title').focus();},150);
+}
+function closeRemModal(){document.getElementById('rem-overlay').classList.remove('open');}
+function saveReminder(){
+  var title=document.getElementById('rem-title').value.trim();
+  if(!title)return;
+  if(!DATA.reminders)DATA.reminders=[];
+  DATA.reminders.push({id:uid(),title:title,date:document.getElementById('rem-date').value,
+    time:document.getElementById('rem-time').value,cat:document.getElementById('rem-cat').value,
+    notes:document.getElementById('rem-notes').value.trim(),done:false,created:Date.now()});
+  sv();closeRemModal();renderView();
+}
+function togRem(i){if(DATA.reminders[i]){DATA.reminders[i].done=!DATA.reminders[i].done;sv();renderView();}}
+function delRem(i){DATA.reminders.splice(i,1);sv();renderView();}
+
+// Check reminders on load — show banner for anything due today
+function checkReminders(){
+  if(!DATA.reminders||!DATA.reminders.length)return;
+  var now=new Date();
+  var due=DATA.reminders.filter(function(r){
+    if(r.done)return false;
+    if(!r.date)return false;
+    var d=new Date(r.date+' '+(r.time||'23:59'));
+    return d<=now;
+  });
+  if(due.length){
+    var msg='🔔 You have '+due.length+' reminder'+(due.length>1?'s':'')+' due:
+';
+    due.slice(0,3).forEach(function(r){msg+='• '+r.title+'
+';});
+    if(due.length>3)msg+='...and '+(due.length-3)+' more';
+    if(window.Notification&&Notification.permission==='granted'){
+      due.slice(0,3).forEach(function(r){new Notification('My Life Goals',{body:r.title,icon:''});});
+    } else {
+      setTimeout(function(){alert(msg);},1000);
+    }
+  }
+}
+function requestNotifPerms(){
+  if(window.Notification&&Notification.permission==='default'){
+    Notification.requestPermission();
+  }
+}
+
+// ── TRAVEL DESTINATIONS ───────────────────────────────────────────────────────
+var editDestIdx = null;
+var bucketDestIdx = null;
+
+function openDestModal(idx){
+  editDestIdx = (idx !== undefined) ? idx : null;
+  var dest = (editDestIdx !== null) ? (DATA.travel.destinations||[])[editDestIdx] : null;
+  document.getElementById('dest-modal-title').textContent = dest ? 'Edit destination' : 'New destination';
+  document.getElementById('dest-name').value = dest ? (dest.name||'') : '';
+  document.getElementById('dest-date').value = dest ? (dest.date||'') : '';
+  document.getElementById('dest-goal').value = dest ? (dest.goal||'') : '';
+  document.getElementById('dest-saved').value = dest ? (dest.saved||'') : '';
+  document.getElementById('dest-notes').value = dest ? (dest.notes||'') : '';
+  document.getElementById('dest-overlay').classList.add('open');
+  setTimeout(function(){document.getElementById('dest-name').focus();},150);
+}
+function openEditDest(idx){openDestModal(idx);}
+function closeDestModal(){document.getElementById('dest-overlay').classList.remove('open');}
+function saveDest(){
+  var name=document.getElementById('dest-name').value.trim();
+  if(!name)return;
+  if(!DATA.travel)DATA.travel={items:[],destinations:[]};
+  if(!DATA.travel.destinations)DATA.travel.destinations=[];
+  var d={name:name,date:document.getElementById('dest-date').value,
+    goal:document.getElementById('dest-goal').value,
+    saved:document.getElementById('dest-saved').value,
+    notes:document.getElementById('dest-notes').value.trim(),
+    bucketList:[],visited:false,open:false};
+  if(editDestIdx!==null){
+    var existing=DATA.travel.destinations[editDestIdx];
+    d.bucketList=existing.bucketList||[];
+    d.visited=existing.visited||false;
+    d.open=existing.open||false;
+    DATA.travel.destinations[editDestIdx]=d;
+  } else {
+    DATA.travel.destinations.push(d);
+  }
+  editDestIdx=null;sv();closeDestModal();renderView();
+}
+function togDest(di){
+  if(!DATA.travel||!DATA.travel.destinations[di])return;
+  DATA.travel.destinations[di].open=!DATA.travel.destinations[di].open;sv();renderView();
+}
+function updDest(di,field,val){
+  if(DATA.travel&&DATA.travel.destinations[di]){DATA.travel.destinations[di][field]=val;sv();}
+}
+function delDest(di){DATA.travel.destinations.splice(di,1);sv();renderView();}
+
+function openBucketModal(di){
+  bucketDestIdx=di;
+  document.getElementById('bucket-title').value='';
+  document.getElementById('bucket-overlay').classList.add('open');
+  setTimeout(function(){document.getElementById('bucket-title').focus();},150);
+}
+function closeBucketModal(){document.getElementById('bucket-overlay').classList.remove('open');}
+function saveBucketItem(){
+  var title=document.getElementById('bucket-title').value.trim();
+  if(!title)return;
+  if(!DATA.travel.destinations[bucketDestIdx].bucketList)DATA.travel.destinations[bucketDestIdx].bucketList=[];
+  DATA.travel.destinations[bucketDestIdx].bucketList.push({title:title,done:false});
+  sv();closeBucketModal();renderView();
+}
+function togBucket(di,bi){
+  DATA.travel.destinations[di].bucketList[bi].done=!DATA.travel.destinations[di].bucketList[bi].done;
+  sv();renderView();
+}
+function delBucket(di,bi){DATA.travel.destinations[di].bucketList.splice(bi,1);sv();renderView();}
+
+document.getElementById('overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.getElementById('cur-overlay').addEventListener('click',function(e){if(e.target===this)closeCurModal();});
+document.getElementById('todo-overlay').addEventListener('click',function(e){if(e.target===this)closeTodoModal();});
+document.getElementById('rem-overlay').addEventListener('click',function(e){if(e.target===this)closeRemModal();});
+document.getElementById('dest-overlay').addEventListener('click',function(e){if(e.target===this)closeDestModal();});
+document.getElementById('bucket-overlay').addEventListener('click',function(e){if(e.target===this)closeBucketModal();});
+
+render();
+requestNotifPerms();
+/* ── AUTH ── */
+function swAuth(m) {
+  document.getElementById('auth-login-form').style.display = m==='login'?'block':'none';
+  document.getElementById('auth-signup-form').style.display = m==='signup'?'block':'none';
+  document.getElementById('atl').classList.toggle('on', m==='login');
+  document.getElementById('ats').classList.toggle('on', m==='signup');
+  setErr('');
+}
+function setErr(msg,ok) {
+  var e=document.getElementById('a-err');
+  e.textContent=msg; e.className='auth-err'+(ok?' ok':'');
+}
+async function doLogin() {
+  var email=document.getElementById('a-email').value.trim();
+  var pass=document.getElementById('a-pass').value;
+  if(!email||!pass){setErr('Please fill in all fields.');return;}
+  document.getElementById('a-lbtn').disabled=true; setErr('');
+  var r=await _sb.auth.signInWithPassword({email:email,password:pass});
+  document.getElementById('a-lbtn').disabled=false;
+  if(r.error){setErr(r.error.message);return;}
+  onLogin(r.data.user);
+}
+async function doSignup() {
+  var name=document.getElementById('a-name').value.trim();
+  var email=document.getElementById('a-semail').value.trim();
+  var pass=document.getElementById('a-spass').value;
+  if(!name||!email||!pass){setErr('Please fill in all fields.');return;}
+  if(pass.length<6){setErr('Password needs at least 6 characters.');return;}
+  document.getElementById('a-sbtn').disabled=true; setErr('');
+  var r=await _sb.auth.signUp({email:email,password:pass,options:{data:{full_name:name}}});
+  document.getElementById('a-sbtn').disabled=false;
+  if(r.error){setErr(r.error.message);return;}
+  setErr('Account created! Check your email to confirm, then sign in.',true);
+}
+async function doReset() {
+  var email=document.getElementById('a-email').value.trim();
+  if(!email){setErr('Enter your email above first.');return;}
+  await _sb.auth.resetPasswordForEmail(email);
+  setErr('Password reset email sent!',true);
+}
+async function doLogout() {
+  await _sb.auth.signOut();
+  _cu=null; DATA={}; initData();
+  document.getElementById('app-screen').classList.remove('show');
+  document.getElementById('auth-screen').style.display='flex';
+}
+function onLogin(user) {
+  _cu=user;
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app-screen').classList.add('show');
+  var meta=user.user_metadata||{};
+  var name=meta.full_name||user.email.split('@')[0];
+  var btn=document.getElementById('signout-btn');
+  if(btn) btn.title='Signed in as '+name;
+  loadData();
+}
+_sb.auth.getSession().then(function(r){
+  if(r.data&&r.data.session) onLogin(r.data.session.user);
+});
+
+</script>
+</div>
+</body>
+</html>
